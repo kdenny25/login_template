@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Budget App</title>
+        <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+{#        <script src="https://cdn.tailwindcss.com"></script>#}
+        <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
+    </head>
+    <style>
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .pulse {
+            animation: pulse 1s 1;
+        }
+    </style>
+    <body class="bg-[#EFEFEF] dark:bg-gray-900">
+        {% include "components/navbar.html" %}
+
+        <div class="flex justify-center pt-10">
+            {% block content %}{% endblock %}
+        </div>
+        {% block modals %}{% endblock %}
+        {% block scripts %}{% endblock %}
+        <script>
+            // Scripts to initialize at startup
+            $(document).ready(function() {
+                localStorage.setItem('color-theme', 'light');
+            })
+        </script>
+    <script>
+        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+    </body>
+</html>
