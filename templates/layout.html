@@ -35,7 +35,7 @@
     <body class="bg-[#EFEFEF] dark:bg-gray-900">
         {% include "components/navbar.html" %}
 
-        <div class="flex justify-center pt-10">
+        <div class="">
             {% block content %}{% endblock %}
         </div>
         {% include "components/login_modal.html" %}
@@ -43,6 +43,7 @@
         {% block modals %}{% endblock %}
         {% block scripts %}{% endblock %}
         <script src="{{ url_for('static', filename='color_mode.js') }}"></script>
+        <script src="{{ url_for('static', filename='authentication.js') }}"></script>
         <script src="https://apis.google.com/js/platform.js" async defer></script>
         <script>
             // On page load or when changing themes, best to add inline in `head` to avoid FOUC
