@@ -12,7 +12,8 @@ class Database:
                             "userid SERIAL PRIMARY KEY, "
                             "name varchar(50) NOT NULL, "
                             "email varchar(150) NOT NULL, "
-                            "password varchar(100) NOT NULL)")
+                            "password varchar(100) NOT NULL, "
+                            "profile_pic BYTEA NOT NULL)")
 
     def email_exists(self, email):
         """Checks if email already exists in the database"""
@@ -27,4 +28,15 @@ class Database:
         else:
             return True
 
+    def register_user(self, name, email, password, image):
+        self.cursor.execute("INSERT INTO users(name, email, password, profile_pic) "
+                            "VALUES(%s, %s, %s, %s);", (name, email, password, image))
+        self.con.commit()
 
+    def get_user(self, email):
+        self.cursor.execute("SELECT * "
+                            "FROM users "
+                            "WHERE email = %s;", (email, ))
+        result = self.cursor.fetchall()[0]
+
+        return result

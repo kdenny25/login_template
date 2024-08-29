@@ -1,5 +1,6 @@
 flask-login
-bcrypt
 python-dotenv
 psycopg2
 flask-wtf
+flask-bcrypt
+pillow

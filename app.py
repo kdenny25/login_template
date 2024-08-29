@@ -1,14 +1,20 @@
 from flask import Flask, request, render_template, redirect, session, jsonify
-from flask_login import LoginManager
+from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from flask_wtf.csrf import CSRFProtect
+from flask_bcrypt import Bcrypt
 from dotenv import dotenv_values
-from utilities import Database
+from utilities import Database, gen_image
+import base64
 import os
+
 
 config = dotenv_values('.env')
 
 # initialize Flask app
 app = Flask(__name__)
+
+# initialize hashing method for user passwords
+bcrypt = Bcrypt(app)
 
 # initialize CSRF protection
 csrf = CSRFProtect(app)
@@ -37,8 +43,12 @@ def load_user(user_id):
     else:
         return None
 
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    return redirect('/')
+
 @app.route('/')
-def hello_world():  # put application's code here
+def home_page():  # put application's code here
     session['google_client'] = config['GOOGLE_LOGIN_CLIENTID']
     return render_template('index.html')
 
@@ -48,7 +58,35 @@ def email_exists():
 
     email_exists = db.email_exists(email)
     print(email_exists)
-    return jsonify(result="complete")
+    return jsonify(result=email_exists)
+
+@app.post('/register_user')
+def register():
+    name = request.form.get('name')
+    email = request.form.get('email')
+    password = request.form.get('password')
+    image = gen_image(name)
+
+    # encrypt password
+    bc_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    db.register_user(name, email, bc_password, image)
+
+    # after registration log user in
+    user = db.get_user(email)
+
+    convert_img = base64.b64encode(user[3]).decode('utf-8')
+
+    user_dict = {
+        "userid": user[0],
+        "name": user[1],
+        "email": user[2],
+        "pic": convert_img
+    }
+
+    login_user(user_dict)
+
+    return jsonify(result="Complete")
 
 if __name__ == '__main__':
     app.run()

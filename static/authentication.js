@@ -11,25 +11,38 @@ function register(){
     }).then(response =>{
         return response.text();
     }).then(result => {
-        console.log(result)
-    })
-    // $.ajax({
-    //     type: 'POST',
-    //     url: '/email_exists',
-    //     headers: {
-    //         "X-CSRFToken": csrf_token,
-    //     },
-    //     data: {
-    //         email : email
-    //     },
-    //     success: function(data) {
-    //         console.log(data.result)
-    //     }
-    // });
+        var result = jQuery.parseJSON(result)
+        console.log(result.result)
+        if(result.result === true){
+            $('#reg-email-error').text('Email already exists')
+        } else {
+            $('#reg-email-error').text('')
+            if(password !== confirm_password){
+                $('#reg-password-error').text("Passwords don't match")
+            } else {
+                $('#reg-password-error').text('')
+                $.ajax({
+                    type: 'POST',
+                    url: '/register_user',
+                    headers: {
+                        "X-CSRFToken": csrf_token,
+                    },
+                    data: {
+                        name : name,
+                        email : email,
+                        password : password
+                    },
+                    success: function(data) {
+                        console.log(data.result)
+                    }
+                });
+            }
+        }
 
-    if(password !== confirm_password){
-        console.log("Passwords don't match")
-    }
+    })
+
+
+
 }
 
 $(".show-pw").on("click", function(){
