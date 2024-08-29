@@ -55,6 +55,23 @@ def home_page():  # put application's code here
 
     return render_template('index.html')
 
+@app.post('/login')
+def login():
+    email = request.form.get('email')
+    password = request.form.get('password')
+    remember = request.form.get('remember')
+
+    remember = True if remember == "checked" else False
+    dbUser = db.get_user_by_email(email)
+
+    if dbUser is not None:
+        if bcrypt.check_password_hash(dbUser[3], password):
+            user = User(dbUser)
+            login_user(user, remember=remember)
+
+            return redirect(request.referrer)
+
+
 @app.route('/logout')
 @login_required
 def logout():

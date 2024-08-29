@@ -9,3 +9,9 @@ Basic information for login.
 * Email
 * Password
 * Profile Image (obtained through social login or automatically generated)
+* Role (To Be Added Later)
+
+
+Todo Items:
+- validate password strength
+- Add remember me
