@@ -45,4 +45,4 @@ def gen_image(name):
 
 
 if __name__ == "__main__":
-    gen_image("ronny donny")
+    print(gen_image("ronny donny"))

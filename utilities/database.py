@@ -30,13 +30,21 @@ class Database:
 
     def register_user(self, name, email, password, image):
         self.cursor.execute("INSERT INTO users(name, email, password, profile_pic) "
-                            "VALUES(%s, %s, %s, %s);", (name, email, password, image))
+                            "VALUES(%s, %s, %s, %s);", (name, email, password, psycopg2.Binary(image)))
         self.con.commit()
 
-    def get_user(self, email):
+    def get_user_by_email(self, email):
         self.cursor.execute("SELECT * "
                             "FROM users "
                             "WHERE email = %s;", (email, ))
+        result = self.cursor.fetchall()[0]
+
+        return result
+
+    def get_user_by_id(self, userid):
+        self.cursor.execute("SELECT * "
+                            "FROM users "
+                            "WHERE userid = %s;", (userid, ))
         result = self.cursor.fetchall()[0]
 
         return result

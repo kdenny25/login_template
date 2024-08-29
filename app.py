@@ -3,7 +3,7 @@ from flask_login import LoginManager, login_user, current_user, login_required, 
 from flask_wtf.csrf import CSRFProtect
 from flask_bcrypt import Bcrypt
 from dotenv import dotenv_values
-from utilities import Database, gen_image
+from utilities import Database, gen_image, User
 import base64
 import os
 
@@ -34,12 +34,14 @@ else:
     print('Loading production config')
 
 @login_manager.user_loader
-def load_user(user_id):
-    user = None
+def load_user(userid):
+    # after registration log user in
+    user = db.get_user_by_id(userid)
+
     if user is not None:
         #if user.phone is Null:
 
-        return user
+        return User(user)
     else:
         return None
 
@@ -50,7 +52,15 @@ def unauthorized_callback():
 @app.route('/')
 def home_page():  # put application's code here
     session['google_client'] = config['GOOGLE_LOGIN_CLIENTID']
+
     return render_template('index.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    # log user out and redirect to home page
+    logout_user()
+    return redirect("/")
 
 @app.route('/email_exists')
 def email_exists():
@@ -73,18 +83,9 @@ def register():
     db.register_user(name, email, bc_password, image)
 
     # after registration log user in
-    user = db.get_user(email)
+    user = User(db.get_user_by_email(email))
 
-    convert_img = base64.b64encode(user[3]).decode('utf-8')
-
-    user_dict = {
-        "userid": user[0],
-        "name": user[1],
-        "email": user[2],
-        "pic": convert_img
-    }
-
-    login_user(user_dict)
+    login_user(user)
 
     return jsonify(result="Complete")
 
