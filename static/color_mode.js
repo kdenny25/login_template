@@ -38,3 +38,28 @@ themeToggleBtn.addEventListener('click', function() {
     }
 
 });
+
+// Change theme based on select option
+$("#theme-select").on('change', function() {
+    // if set via local storage previously
+    if (localStorage.getItem('color-theme')) {
+        if (localStorage.getItem('color-theme') === 'light') {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('color-theme', this.value)
+        } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('color-theme', this.value)
+        }
+
+    // if NOT set via local storage previously
+    } else {
+        if (document.documentElement.classList.contains('dark')) {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('color-theme', this.value)
+        } else {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('color-theme', this.value)
+        }
+    }
+    console.log(this.value)
+})

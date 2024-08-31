@@ -53,7 +53,10 @@ def unauthorized_callback():
 def home_page():  # put application's code here
     session['google_client'] = config['GOOGLE_LOGIN_CLIENTID']
 
-    return render_template('index.html')
+    if current_user.is_authenticated:
+        return redirect('/logged_in')
+    else:
+        return render_template('index.html')
 
 @app.post('/login')
 def login():
@@ -69,8 +72,7 @@ def login():
             user = User(dbUser)
             login_user(user, remember=remember)
 
-            return redirect(request.referrer)
-
+            return redirect('/logged_in')
 
 @app.route('/logout')
 @login_required
@@ -105,6 +107,16 @@ def register():
     login_user(user)
 
     return jsonify(result="Complete")
+
+@app.route('/user_settings')
+@login_required
+def user_settings():
+    return render_template('user_settings.html')
+
+@app.route('/logged_in')
+@login_required
+def logged_in():
+    return render_template('logged_in.html')
 
 if __name__ == '__main__':
     app.run()
