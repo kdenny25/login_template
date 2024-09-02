@@ -5,7 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="google-signin-client_id" content="{{ session['google_client'] }}">
         <title>Budget App</title>
-        <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />
+{#        <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />#}
+        <link href="{{ url_for('static', filename='flowbite.min.css') }}" rel="stylesheet"/>
         <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
 {#        <script src="https://cdn.tailwindcss.com"></script>#}
@@ -38,14 +39,34 @@
         <div class="">
             {% block content %}{% endblock %}
         </div>
-        {% include "components/login_modal.html" %}
-        {% include "components/registration_modal.html" %}
+        {% if current_user.is_authenticated == False %}
+            {% include "components/login_modal.html" %}
+            {% include "components/registration_modal.html" %}
+        {% endif %}
         {% block modals %}{% endblock %}
         {% block scripts %}{% endblock %}
         <script src="{{ url_for('static', filename='color_mode.js') }}"></script>
         <script src="{{ url_for('static', filename='authentication.js') }}"></script>
         <script src="https://apis.google.com/js/platform.js" async defer></script>
         <script>
+            $(document).ready(function(){
+                var theme = '{{ current_user.theme }}'
+                localStorage.setItem('color-theme', theme)
+                if (localStorage.getItem('color-theme')) {
+                    if (localStorage.getItem('color-theme') === 'dark') {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                // if NOT set via local storage previously
+                } else {
+                    if (theme === 'light') {
+                        document.documentElement.classList.remove('dark');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                    }
+                }
+            })
             // On page load or when changing themes, best to add inline in `head` to avoid FOUC
             if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');

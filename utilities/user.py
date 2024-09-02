@@ -17,6 +17,9 @@ class User(UserMixin):
         # self.role = json['role']
         self.password = dbUser[3]
         self.image = bytes(dbUser[4]).decode('utf-8')
+        self.theme = dbUser[5]
+        self.google_account = dbUser[6]
+
 
     def is_authenticated(self):
         return True
@@ -26,6 +29,12 @@ class User(UserMixin):
         return False
     def get_id(self):
         return self._id
+
+    def has_google_login(self):
+        if self.google_account:
+            return True
+        else:
+            return False
 
     # returns true if user is admin.
     def is_admin(self):
@@ -41,5 +50,6 @@ class User(UserMixin):
             "email": self.email,
             # "role": self.role,
             "password": self.password,
-            "pic": self.image
+            "pic": self.image,
+            "theme": self.theme
         }

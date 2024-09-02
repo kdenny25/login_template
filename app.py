@@ -6,7 +6,8 @@ from dotenv import dotenv_values
 from utilities import Database, gen_image, User
 import base64
 import os
-
+import io
+import base64
 
 config = dotenv_values('.env')
 
@@ -39,8 +40,6 @@ def load_user(userid):
     user = db.get_user_by_id(userid)
 
     if user is not None:
-        #if user.phone is Null:
-
         return User(user)
     else:
         return None
@@ -106,7 +105,7 @@ def register():
 
     login_user(user)
 
-    return jsonify(result="Complete")
+    return redirect('/logged_in')
 
 @app.route('/user_settings')
 @login_required
@@ -117,6 +116,18 @@ def user_settings():
 @login_required
 def logged_in():
     return render_template('logged_in.html')
+
+@app.post('/save_profile_pic')
+@login_required
+def save_profile_pic():
+    uploaded_pic = request.files['new_profile_pic'].read()
+    #print(type(uploaded_pic.read()))
+    data = io.BytesIO(uploaded_pic)
+
+    encoded_img_data = base64.b64encode(data.getvalue())
+
+    db.update_pic(current_user._id, encoded_img_data)
+    return redirect(request.referrer)
 
 if __name__ == '__main__':
     app.run()
