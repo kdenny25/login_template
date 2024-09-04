@@ -59,3 +59,21 @@ class Database:
                             "WHERE userid = %s", (psycopg2.Binary(image), id))
 
         self.con.commit()
+
+    def update_theme(self, id, theme):
+        self.cursor.execute("UPDATE users "
+                            "SET theme = %s "
+                            "WHERE userid = %s", (theme, id))
+        self.con.commit()
+
+    def update_info(self, id, name, email):
+        self.cursor.execute("UPDATE users "
+                            "SET name = %s, email = %s "
+                            "WHERE userid = %s", (name, email, id))
+        self.con.commit()
+
+    def update_password(self, id, password):
+        self.cursor.execute("UPDATE users "
+                            "SET password = %s "
+                            "WHERE userid = %s", (password, id))
+        self.con.commit()

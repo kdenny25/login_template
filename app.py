@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, session, jsonify
+from flask import Flask, request, render_template, redirect, session, jsonify, flash
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from flask_wtf.csrf import CSRFProtect
 from flask_bcrypt import Bcrypt
@@ -120,6 +120,7 @@ def logged_in():
 @app.post('/save_profile_pic')
 @login_required
 def save_profile_pic():
+    """Updates user profile picture in database"""
     uploaded_pic = request.files['new_profile_pic'].read()
     #print(type(uploaded_pic.read()))
     data = io.BytesIO(uploaded_pic)
@@ -128,6 +129,50 @@ def save_profile_pic():
 
     db.update_pic(current_user._id, encoded_img_data)
     return redirect(request.referrer)
+
+@app.post('/save_theme')
+@login_required
+def save_theme():
+    """Updates user profile theme in database"""
+    theme = request.form.get('theme')
+    db.update_theme(current_user._id, theme)
+
+    return jsonify(data='success')
+
+@app.post('/save_info')
+@login_required
+def save_info():
+    name = request.form.get('name')
+    email = request.form.get('email')
+
+    db.update_info(current_user._id, name, email)
+
+    return jsonify(data='success')
+
+@app.post('/validate_pw')
+@login_required
+def validate_password():
+    """Verifies the provided password matches the stored password"""
+    password = request.form.get('old_password')
+
+    if bcrypt.check_password_hash(current_user.password, password):
+        result = True
+    else:
+        result = False
+
+    return jsonify(result = result)
+
+@app.post('/update_pw')
+@login_required
+def update_password():
+    """Update password"""
+    password = request.form.get('new_password')
+
+    bc_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    db.update_password(current_user._id, bc_password)
+
+    return jsonify(result = "complete")
 
 if __name__ == '__main__':
     app.run()

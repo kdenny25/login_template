@@ -33,7 +33,7 @@ function register(){
                         password : password
                     },
                     success: function(data) {
-                        console.log(data.result)
+                        window.location.href = "/logged_in"
                     }
                 });
             }
@@ -47,7 +47,7 @@ function register(){
 
 $(".show-pw").on("click", function(){
     var pw_input = $(this).parent().find('.password')
-    console.log($(this).parent().find('.password').attr('type'))
+
     $(this).find('path').toggle()
 
     if(pw_input.attr("type") === "password"){

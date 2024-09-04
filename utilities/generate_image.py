@@ -44,10 +44,9 @@ def gen_image(name):
 
     data = io.BytesIO()
     img.save(data, 'PNG')
-    print(type(data.getvalue()))
+
     encoded_img_data = base64.b64encode(data.getvalue())
-    print(type(encoded_img_data))
-    img.show()
+
     return encoded_img_data
 
 

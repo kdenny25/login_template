@@ -19,6 +19,8 @@ class User(UserMixin):
         self.image = bytes(dbUser[4]).decode('utf-8')
         self.theme = dbUser[5]
         self.google_account = dbUser[6]
+        self.google_name = dbUser[7]
+        self.google_email = dbUser[8]
 
 
     def is_authenticated(self):
@@ -51,5 +53,7 @@ class User(UserMixin):
             # "role": self.role,
             "password": self.password,
             "pic": self.image,
-            "theme": self.theme
+            "theme": self.theme,
+            "google_name": self.google_name,
+            "google_email": self.google_email
         }
